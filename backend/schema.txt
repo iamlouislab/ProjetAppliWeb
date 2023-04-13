@@ -1,0 +1,7 @@
+cards: id, title, description, keywords (liste de string), section_id (clé externe liée à la table des sections), user_id (id de l'utilisateur qui a créé la section référencé dans la table users), link (string), 
+
+portfolios: id, user_id
+
+sections: id, title, description, portfolio_id (id du portfolio au quelle la sectionn appartient), user_id
+
+users: id, username, portfolio_id description,password 
