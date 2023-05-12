@@ -1,14 +1,19 @@
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { SearchProfile } from "./SearchProfile";
 import Link from "next/link";
+import { AuthContext } from "../contexts/authContext";
 
 function Navbar() {
   const router = useRouter();
-  const user = false;
+  const authContext = useContext(AuthContext);
+
   const handleLoginClick = () => {
-    if (user) {
-      router.push("/");
+    if (authContext?.user) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      authContext?.setUser(null);
+      router.push("/login");
     } else {
       router.push("/login");
     }
@@ -27,7 +32,7 @@ function Navbar() {
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={handleLoginClick}
           >
-            {user ? "Logout" : "Login"}
+            {authContext?.user ? "Logout" : "Login"}
           </button>
         </div>
       </div>

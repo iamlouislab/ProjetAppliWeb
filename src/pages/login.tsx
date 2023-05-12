@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../../contexts/authContext";
 import Router from "next/router";
+import { authFetch } from "utils/authFetch";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -16,22 +17,24 @@ const LoginPage = () => {
       return;
     }
 
-    const { setUser } = authContext;
-
     // Call your API
-    const res = await fetch("http://localhost:8080//login", {
-      method: "POST",
-      body: JSON.stringify({ username, password }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const res = await fetch(
+      "http://localhost:8080/ProjetAppliWeb/rest/users/login",
+      {
+        method: "POST",
+        body: JSON.stringify({ username, password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (res.ok) {
       const { token, user } = await res.json();
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
-      setUser(user);
+      authContext.setUser(user);
+      console.log("user", user);
       // Redirect to home page
       Router.push("/");
     } else {
@@ -42,7 +45,10 @@ const LoginPage = () => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-200">
-      <form onSubmit={handleSubmit} className="p-10 bg-white rounded shadow-xl w-1/2">
+      <form
+        onSubmit={handleSubmit}
+        className="p-10 bg-white rounded shadow-xl w-1/2"
+      >
         <h1 className="text-3xl font-bold mb-10 text-center">Login</h1>
         {error && <p className="mb-4 text-red-500">{error}</p>}
         <input

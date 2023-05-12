@@ -21,8 +21,10 @@ export const AuthProvider = ({ children }: { children: any }) => {
   const [user, setUser] = useState<User>(null);
 
   useEffect(() => {
+    console.log("dans useEffect from context");
     const userFromStorage = localStorage.getItem("user");
     if (userFromStorage) {
+      console.log("userFromStorage", userFromStorage);
       setUser(JSON.parse(userFromStorage));
     }
   }, []);

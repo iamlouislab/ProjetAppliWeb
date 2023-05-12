@@ -13,7 +13,7 @@ export const authFetch = async (path: string, options: RequestInit = {}) => {
     if (token) {
       headers = {
         ...headers,
-        'Authorization': `Bearer ${token}`,
+        'Authorization': token,
       };
     }
   
