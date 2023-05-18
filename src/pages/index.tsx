@@ -4,7 +4,7 @@ const HeroSection = () => {
   return (
     <div className="bg-gray-100 py-20 h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="lg:text-center">
+        <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
             Build Your Portfolio
           </h2>
