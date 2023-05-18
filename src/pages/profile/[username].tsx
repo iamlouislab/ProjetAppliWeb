@@ -8,24 +8,36 @@ function Username() {
   const [loadingComplete, setLoadingComplete] = useState(false);
 
   const [unknownUser, setUnknownUser] = useState(false);
-  const [noPortfolio, setNoPortfolio] = useState(false);
 
   useEffect(() => {
-    if (username !== undefined) {
-      //   fetch(`/api/profile/${username}`)
-      //     .then((res) => res.json())
-      //     .then((data) => {
-      //       if (data.error) {
-      //         setUnknownUser(true);
-      //       } else {
-      //         setUserData(data.userData);
-      //         setPortfolio(data.portfolioData);
-      //         setUserSections(data.sectionsData);
-      //       }
-      //       setLoadingComplete(true);
-      console.log("fetched data");
-      setLoadingComplete(true);
-    }
+    const fetchPortfolio = async () => {
+      try {
+        if (username !== undefined) {
+          const res = await fetch("/portfolio/getPortfolioByUsername", {
+            method: "POST",
+            body: JSON.stringify({ username }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (res.ok) {
+            const { portfolio } = await res.json();
+            console.log("portfolio", portfolio);
+          } else {
+            setUnknownUser(true);
+          }
+          console.log("fetched data");
+          setLoadingComplete(true);
+        }
+      } catch (error) {
+        console.log(error);
+        setUnknownUser(true);
+        setLoadingComplete(true);
+      }
+    };
+
+    fetchPortfolio();
   }, [username]);
 
   if (username === undefined || !loadingComplete) {
@@ -38,11 +50,7 @@ function Username() {
     if (unknownUser) {
       return <div>Unknown user</div>;
     } else {
-      if (noPortfolio) {
-        return <div>User has no portfolio</div>;
-      } else {
-        return <div>Welcome to {username}&apos;s portfolio</div>;
-      }
+      return <div>Welcome to {username}&apos;s portfolio</div>;
     }
   }
 }

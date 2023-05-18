@@ -1,8 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useRouter } from "next/router";
-import EditProfileButton from "@/components/EditProfile";
-import { Plus, Trash } from "lucide-react";
-import { Edit } from "lucide-react";
+import { Trash } from "lucide-react";
 
 import {
   AlertDialog,
@@ -38,28 +36,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { baseColors } from "../../lib/utils";
+import { baseColors } from "../../../lib/utils";
 import { AuthContext } from "@/contexts/authContext";
 import Portfolio from "@/types/Portfolio";
 import useUserData from "@/hooks/useUserData";
 import Section from "@/types/Section";
 import Card from "@/types/Card";
+import { authFetch } from "@/utils/authFetch";
 
 function profile() {
-  const [userCreated, setUserCreated] = useState(false);
-  const authContext = useContext(AuthContext);
-
-  const [portfolio, setPortfolio] = useState<Portfolio>(
-    null as unknown as Portfolio
-  );
-
-  const router = useRouter();
-
-  const [loading, setLoading] = useState(true);
-
   const { userData, isLoading, errorMessage } = useUserData();
 
-  // const cards = userData?.sections.map // TO COMPLETE
+  // get the list of cards that are in all the sectinos
+  const cards = userData?.sections.map((section) => section.cards).flat();
 
   if (isLoading || !userData) {
     return <div>Loading...</div>;
@@ -94,8 +83,6 @@ function profile() {
             user_id={userData.user.id}
             portfolio_id={userData.id}
           />
-          <EditProfileButton userData={userData} />
-          <EditColorButton portfolioData={portfolio} />
         </div>
       </div>
       <div className="mx-auto flex w-5/6 flex-col gap-10 pt-8">
@@ -113,7 +100,7 @@ function profile() {
           <div className="mb-2 text-2xl text-white">Your cards</div>
           <div className="flex flex-col gap-2">
             <CardRowHeader />
-            {cards.map((card, index) => (
+            {cards?.map((card, index) => (
               <CardRow card={card} key={index} />
             ))}
           </div>
@@ -161,9 +148,6 @@ const SectionRow = ({ section }: { section: Section }) => {
         <div className="ml-2">{section.description}</div>
       </div>
       <div className="flex flex-row items-center gap-2 rounded bg-slate-100 py-2 text-2xl text-black">
-        <button className="mr-2">
-          <EditSectionButton section={section} />
-        </button>
         <div className="mr-2">
           <DeleteSectionButton section={section} />
         </div>
@@ -180,9 +164,6 @@ const CardRow = ({ card }: { card: Card }) => {
         <div className="ml-2">{card.description}</div>
       </div>
       <div className="flex flex-row items-center gap-2 rounded bg-slate-100 py-2 text-2xl text-black">
-        <button className="mr-2">
-          <EditCardButton card={card} />
-        </button>
         <div className="mr-2">
           <DeleteCardButton card={card} />
         </div>
@@ -191,319 +172,19 @@ const CardRow = ({ card }: { card: Card }) => {
   );
 };
 
-const EditSectionButton = ({
-  section,
-}: {
-  section: Section;
-}) => {
-  const supabase = useSupabaseClient<Database>();
-
-  const [title, setTitle] = useState<string>(section.title as string);
-  const [description, setDescription] = useState<string>(
-    section.description as string
-  );
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<boolean>(false);
-
-  const editSection = async ({
-    title,
-    description,
-  }: {
-    title: string;
-    description: string;
-  }) => {
-    setLoading(true);
-    console.log("Editing section with id: ", section.id);
-    const { error } = await supabase
-      .from("sections")
-      .update({ title: title, description: description })
-      .eq("id", section.id);
-    if (error) {
-      console.log(error);
-      setError(error.message);
-    } else {
-      console.log("Edited");
-      setSuccess(true);
-    }
-    setLoading(false);
-  };
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Edit />
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit section</DialogTitle>
-          <DialogDescription>
-            Update your section's title and description.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right text-white">
-              Title
-            </Label>
-            <Input
-              id="title"
-              value={title}
-              className="col-span-3"
-              onChange={(e) => {
-                setTitle(e.target.value);
-              }}
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right text-white">
-              Description
-            </Label>
-            <Input
-              id="description"
-              value={description}
-              className="col-span-3"
-              onChange={(e) => {
-                setDescription(e.target.value);
-              }}
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <div className="flex items-center justify-center gap-5">
-            {error && <div className="text-sm text-red-500">{error}</div>}
-            {success && (
-              <div className="text-sm text-green-500">
-                Section edited successfully
-              </div>
-            )}
-            {loading ? (
-              <ButtonLoading text="Editing section..." />
-            ) : (
-              <Button
-                type="submit"
-                onClick={() =>
-                  editSection({
-                    title,
-                    description,
-                  })
-                }
-              >
-                Update section
-              </Button>
-            )}
-          </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
-const EditCardButton = ({
-  card,
-}: {
-  card: Card;
-}) => {
-  const supabase = useSupabaseClient<Database>();
-
-  const [title, setTitle] = useState<string>(card.title as string);
-  const [description, setDescription] = useState<string>(
-    card.description as string
-  );
-  const [keywords, setKeywords] = useState<string[]>(card.keywords as string[]);
-  const [link, setLink] = useState<string>(card.link as string);
-
-  const [sections, setSections] = useState<
-    Database["public"]["Tables"]["sections"]["Row"][]
-  >([]);
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-
-  const [selectedSectionId, setSelectedSectionId] = useState<number>(0);
-
-  const editCard = async ({
-    title,
-    description,
-    keywords,
-    link,
-  }: {
-    title: string;
-    description: string;
-    keywords: string[];
-    link: string;
-  }) => {
-    console.log("Editing card with id: ", card.id);
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("cards")
-      .update({
-        title: title,
-        description: description,
-        keywords: keywords,
-        section: selectedSectionId,
-      })
-      .eq("id", card.id)
-      .select();
-    if (error) {
-      console.log(error);
-      setError(error.message);
-    } else {
-      setSuccess("Card edited successfully");
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    const getSections = async () => {
-      const { data, error } = await supabase
-        .from("sections")
-        .select()
-        .order("id", { ascending: true });
-      if (error) {
-        console.log(error);
-      } else {
-        setSections(data as Database["public"]["Tables"]["sections"]["Row"][]);
-      }
-    };
-    getSections();
-  }, []);
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Edit />
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit card</DialogTitle>
-          <DialogDescription>
-            Update your card's title, description, keywords, link, image and
-            section.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right text-white">
-              Title
-            </Label>
-            <Input
-              id="title"
-              value={title}
-              className="col-span-3"
-              onChange={(e) => {
-                setTitle(e.target.value);
-              }}
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="description" className="text-right text-white">
-              Description
-            </Label>
-            <Input
-              id="title"
-              value={description}
-              className="col-span-3"
-              onChange={(e) => {
-                setDescription(e.target.value);
-              }}
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="keywords" className="text-right text-white">
-              Keywords (separated by commas)
-            </Label>
-            <Input
-              id="keywords"
-              value={keywords.join(",")}
-              className="col-span-3"
-              onChange={(e) => {
-                setKeywords(e.target.value.split(","));
-              }}
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="keywords" className="text-right text-white">
-              Link (when the card is clicked)
-            </Label>
-            <Input
-              id="link"
-              value={link}
-              className="col-span-3"
-              onChange={(e) => {
-                setLink(e.target.value);
-              }}
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="section" className="text-right text-white">
-              Section (choose from existing ones)
-            </Label>
-            <Select
-              onValueChange={(value) => setSelectedSectionId(parseInt(value))}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Section" />
-              </SelectTrigger>
-              <SelectContent>
-                {sections.map((section) => (
-                  <div key={section.id}>
-                    <SelectItem value={section.id as unknown as string}>
-                      {section.title}
-                    </SelectItem>
-                  </div>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        <DialogFooter>
-          <div className="flex items-center justify-center gap-5">
-            {error && <div className="text-sm text-red-500">{error}</div>}
-            {success && <div className="text-sm text-green-500">{success}</div>}
-            {loading ? (
-              <ButtonLoading text="Editing card..." />
-            ) : (
-              <Button
-                type="submit"
-                onClick={() =>
-                  editCard({
-                    title,
-                    description,
-                    keywords,
-                    link,
-                  })
-                }
-              >
-                Update card
-              </Button>
-            )}
-          </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
-const DeleteSectionButton = ({
-  section,
-}: {
-  section: Database["public"]["Tables"]["sections"]["Row"];
-}) => {
-  const supabase = useSupabaseClient<Database>();
-
+const DeleteSectionButton = ({ section }: { section: Section }) => {
   const deleteSection = async () => {
     console.log("Deleting section with id: ", section.id);
-    const { error } = await supabase
-      .from("sections")
-      .delete()
-      .eq("id", section.id);
-    if (error) {
-      console.log(error);
+    const res = await authFetch("/sections/delete", {
+      method: "POST",
+      body: JSON.stringify({ section_id: section.id }),
+    });
+    console.log(res);
+
+    if (res.status === 200) {
+      window.location.reload();
     } else {
-      console.log("Deleted");
+      console.log("Error deleting section");
     }
   };
 
@@ -531,21 +212,18 @@ const DeleteSectionButton = ({
   );
 };
 
-const DeleteCardButton = ({
-  card,
-}: {
-  card: Database["public"]["Tables"]["cards"]["Row"];
-}) => {
-  const supabase = useSupabaseClient<Database>();
-
+const DeleteCardButton = ({ card }: { card: Card }) => {
   const deleteCard = async () => {
-    console.log("Deleting card with id: ", card.id);
-    const { error } = await supabase.from("cards").delete().eq("id", card.id);
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Deleted");
+    const res = await authFetch("/cards/delete", {
+      method: "POST",
+      body: JSON.stringify({ card_id: card.id }),
+    });
+
+    if (res.status === 200) {
+      window.location.reload();
     }
+
+    console.log(res);
   };
 
   return (
@@ -579,16 +257,12 @@ const CreateCardButton = ({
   user_id: number;
   sections: Section[];
 }) => {
-  const supabase = useSupabaseClient<Database>();
-
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [keywords, setKeywords] = useState<string[]>([]);
-  const [image, setImage] = useState<File | null>(null);
+  const [link, setLink] = useState<string>("");
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
 
   const [selectedSectionId, setSelectedSectionId] = useState<number | null>(
     null
@@ -597,13 +271,11 @@ const CreateCardButton = ({
   const createCard = async ({
     title,
     description,
-    image,
-    keywords,
+    link,
   }: {
     title: string;
     description: string;
-    image: File | null;
-    keywords: string[];
+    link: string;
   }) => {
     setLoading(true);
 
@@ -613,34 +285,24 @@ const CreateCardButton = ({
       return;
     }
 
-    // uploading image
-    if (image) {
-      const storageData = await supabase.storage
-        .from("profile-pictures")
-        .upload(`${user_id}/card-${title}.png`, image);
-
-      if (storageData.error) {
-        console.log(storageData.error);
-        setError("Error uploading image: " + storageData.error.message);
-      } else {
-        console.log("Uploaded image");
-      }
-    }
-
     console.log("Creating card with title: ", title);
-    const { error } = await supabase.from("cards").insert({
-      title: title,
-      description: description,
-      keywords: keywords,
-      user_id: user_id,
-      section: selectedSectionId,
+    const res = await authFetch("/cards/create", {
+      method: "POST",
+      body: JSON.stringify({
+        title,
+        description,
+        link,
+        section_id: selectedSectionId,
+        user_id: user_id,
+      }),
     });
-    if (error) {
-      console.log(error);
+
+    if (res.status === 200) {
+      window.location.reload();
     } else {
-      console.log("Created");
-      setSuccess(true);
+      setError("Error creating card");
     }
+
     setLoading(false);
   };
 
@@ -685,29 +347,15 @@ const CreateCardButton = ({
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="keywords" className="text-right text-white">
-              Keywords (separated by commas)
+            <Label htmlFor="link" className="text-right text-white">
+              Link
             </Label>
             <Input
-              id="keywords"
-              value={keywords}
+              id="link"
+              value={link}
               className="col-span-3"
               onChange={(e) => {
-                setKeywords(e.target.value.split(","));
-              }}
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="banner_image" className="text-right text-white">
-              Image
-            </Label>
-            <input
-              type="file"
-              id="file"
-              name="file"
-              accept="image/png, image/jpeg"
-              onChange={(e) => {
-                setImage(e.target.files ? e.target.files[0] : null);
+                setLink(e.target.value);
               }}
             />
           </div>
@@ -736,19 +384,12 @@ const CreateCardButton = ({
         <DialogFooter>
           <div className="flex items-center justify-center gap-5">
             {error && <p className="text-red-500">{error}</p>}
-            {success && <p className="text-green-500">Success!</p>}
-            {loading ? (
-              <ButtonLoading text="Creating card..." />
-            ) : (
-              <Button
-                type="submit"
-                onClick={() =>
-                  createCard({ title, description, image, keywords })
-                }
-              >
-                Create card
-              </Button>
-            )}
+            <ButtonLoading
+              text="Create card"
+              loading_text={"Creating..."}
+              loading={loading}
+              onClick={() => createCard({ title, description, link })}
+            />
           </div>
         </DialogFooter>
       </DialogContent>
@@ -763,37 +404,36 @@ const CreateSectionButton = ({
   user_id: number;
   portfolio_id: number;
 }) => {
-  const supabase = useSupabaseClient<Database>();
-
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<boolean>(false);
 
   const createSection = async ({
     title,
     description,
-    user_id,
   }: {
     title: string;
     description: string;
-    user_id: string;
   }) => {
     setLoading(true);
-    const { error } = await supabase.from("sections").insert({
-      title: title,
-      description: description,
-      user_id: user_id,
-      portfolio: portfolio_id,
+
+    const res = await authFetch("/sections/create", {
+      method: "POST",
+      body: JSON.stringify({
+        title,
+        description,
+        user_id,
+        portfolio_id,
+      }),
     });
-    if (error) {
-      console.log(error);
-      setError("Error creating section: " + error.message);
+
+    if (res.status === 200) {
+      window.location.reload();
     } else {
-      console.log("Created");
-      setSuccess(true);
+      setError("Error creating section");
     }
+
     setLoading(false);
   };
 
@@ -840,231 +480,16 @@ const CreateSectionButton = ({
         <DialogFooter>
           <div className="flex items-center justify-center gap-5">
             {error && <p className="text-red-500">{error}</p>}
-            {success && <p className="text-green-500">Success!</p>}
-            {loading ? (
-              <ButtonLoading text="Creating section..." />
-            ) : (
-              <Button
-                type="submit"
-                onClick={() => createSection({ title, description, user_id })}
-              >
-                Create section
-              </Button>
-            )}
+            <ButtonLoading
+              text="Create card"
+              loading_text={"Creating..."}
+              loading={loading}
+              onClick={() => createSection({ title, description })}
+            />
           </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
-
-const EditColorButton = ({
-  portfolioData,
-}: {
-  portfolioData: Database["public"]["Tables"]["portfolios"]["Row"];
-}) => {
-  console.log("portfolio Edit color button", portfolioData);
-  const [background_color, setBackgroundColor] = useState<string>(
-    portfolioData?.background_color || baseColors.background_color
-  );
-  const [text_major_color, setTextMajorColor] = useState<string>(
-    portfolioData?.text_major_color || baseColors.text_major_color
-  );
-  const [text_color_minor, setTextColorMinor] = useState<string>(
-    portfolioData?.text_minor_color || baseColors.text_minor_color
-  );
-  const [text_minor_2_color, setTextColorMinor2] = useState<string>(
-    portfolioData?.text_minor_2_color || baseColors.text_minor_2_color
-  );
-
-  const supabase = useSupabaseClient<Database>();
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<boolean>(false);
-
-  const updateColors = async ({
-    background_color,
-    text_major_color,
-    text_color_minor,
-    text_minor_2_color,
-  }: {
-    background_color: string;
-    text_major_color: string;
-    text_color_minor: string;
-    text_minor_2_color: string;
-  }) => {
-    setLoading(true);
-    const { error } = await supabase
-      .from("portfolios")
-      .update({
-        background_color: background_color,
-        text_major_color: text_major_color,
-        text_minor_color: text_color_minor,
-        text_minor_2_color: text_minor_2_color,
-      })
-      .eq("id", portfolioData.id);
-    if (error) {
-      console.log(error);
-      setError("Error updating colors: " + error.message);
-    } else {
-      console.log("Updated");
-      setSuccess(true);
-    }
-    setLoading(false);
-  };
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="bg-black">
-          Edit colors
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit colors</DialogTitle>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="background_color" className="text-right text-white">
-              Background color
-            </Label>
-            <div className="flex flex-row">
-              <div
-                className="col-span-3 h-10 w-10 rounded"
-                style={{
-                  backgroundColor: background_color,
-                }}
-              ></div>
-              <ColorPicker
-                initialColor={background_color}
-                onChange={(color) => setBackgroundColor(color)}
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="text_color" className="text-right text-white">
-              Text major color
-            </Label>
-            <div className="flex flex-row">
-              <div
-                className="col-span-3 h-10 w-10 rounded"
-                style={{
-                  backgroundColor: text_major_color,
-                }}
-              ></div>
-              <ColorPicker
-                initialColor={text_major_color}
-                onChange={(color) => setTextMajorColor(color)}
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="text_color_minor" className="text-right text-white">
-              Text color minor
-            </Label>
-            <div className="flex flex-row">
-              <div
-                className="col-span-3 h-10 w-10 rounded"
-                style={{
-                  backgroundColor: text_color_minor,
-                }}
-              ></div>
-              <ColorPicker
-                initialColor={text_color_minor}
-                onChange={(color) => setTextColorMinor(color)}
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label
-              htmlFor="text_color_minor_2"
-              className="text-right text-white"
-            >
-              Text color minor 2
-            </Label>
-            <div className="flex flex-row">
-              <div
-                className="col-span-3 h-10 w-10 rounded"
-                style={{
-                  backgroundColor: text_minor_2_color,
-                }}
-              ></div>
-              <ColorPicker
-                initialColor={text_minor_2_color}
-                onChange={(color) => setTextColorMinor2(color)}
-              />
-            </div>
-          </div>
-        </div>
-        <DialogFooter>
-          <div className="flex items-center justify-center gap-5">
-            {error && <p className="text-red-500">{error}</p>}
-            {success && <p className="text-green-500">Success!</p>}
-            {loading ? (
-              <ButtonLoading text="Updating colors..." />
-            ) : (
-              <Button
-                type="submit"
-                onClick={() =>
-                  updateColors({
-                    background_color,
-                    text_major_color,
-                    text_color_minor,
-                    text_minor_2_color,
-                  })
-                }
-              >
-                Update colors
-              </Button>
-            )}
-          </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
-const ColorPicker = ({
-  initialColor,
-  onChange,
-}: {
-  initialColor: string;
-  onChange: (color: string) => void;
-}) => {
-  const [color, setColor] = useState(initialColor);
-  const [displayColorPicker, setDisplayColorPicker] = useState(false);
-
-  const handleClick = () => {
-    setDisplayColorPicker(!displayColorPicker);
-  };
-
-  const handleClose = () => {
-    setDisplayColorPicker(false);
-  };
-
-  const handleChange = (color: any) => {
-    setColor(color.hex);
-    onChange(color.hex);
-  };
-
-  return (
-    <div className="flex items-center gap-4">
-      <div
-        className="h-8 w-12 rounded border border-white"
-        style={{ backgroundColor: color }}
-      ></div>
-      <Button variant="outline" onClick={handleClick}>
-        Choose color
-      </Button>
-      {displayColorPicker ? (
-        <div className="absolute z-10">
-          <div className="fixed inset-0" onClick={handleClose}></div>
-          <SketchPicker color={color as any} onChange={handleChange} />
-        </div>
-      ) : null}
-    </div>
   );
 };
 
