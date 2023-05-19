@@ -15,8 +15,8 @@ const useUserData = () => {
 
     // Call your API
     const res = await fetch(
-      "http://localhost:8080/ProjetAppliWeb/rest/users/getPortfolioByUserId/" +
-        authContext.user.id,
+      "http://localhost:8080/ProjetAppliWeb/rest/users/getPortfolioByUsername/" +
+        authContext.user.username,
       {
         method: "GET",
         headers: {
@@ -26,8 +26,8 @@ const useUserData = () => {
     );
 
     if (res.ok) {
-      const { userData } = await res.json();
-      return userData as Portfolio;
+      const { portfolio } = await res.json();
+      return portfolio as Portfolio;
     } else {
       console.log("error useUserPortfolio: " + error.message);
       throw error;
