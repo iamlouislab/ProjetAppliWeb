@@ -43,6 +43,7 @@ import useUserData from "@/hooks/useUserData";
 import Section from "@/types/Section";
 import Card from "@/types/Card";
 import { authFetch } from "@/utils/authFetch";
+import withAuthentication from "@/hoc/withAuthentification";
 
 function profile() {
   const { userData, isLoading, errorMessage } = useUserData();
@@ -493,4 +494,4 @@ const CreateSectionButton = ({
   );
 };
 
-export default profile;
+export default withAuthentication(profile);
