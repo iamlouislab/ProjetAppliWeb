@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Loading } from "components/Loading";
+import { baseColors } from "@/lib/utils";
+import UserHelloSection from "@/components/UserHelloSection";
+import Portfolio from "@/types/Portfolio";
+import Section from "@/types/Section";
+import SectionComponent from "@/components/SectionComponent";
 
 function Username() {
   const router = useRouter();
@@ -8,22 +13,29 @@ function Username() {
   const [loadingComplete, setLoadingComplete] = useState(false);
 
   const [unknownUser, setUnknownUser] = useState(false);
+  const [userData, setUserData] = useState<User>();
+  const [portfolio, setPortfolio] = useState<Portfolio>();
 
   useEffect(() => {
     const fetchPortfolio = async () => {
       try {
         if (username !== undefined) {
-          const res = await fetch("/portfolio/getPortfolioByUsername", {
-            method: "POST",
-            body: JSON.stringify({ username }),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+          const res = await fetch(
+            "/portfolio/getPortfolioByUsername/" + username,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
 
           if (res.ok) {
-            const { portfolio } = await res.json();
+            const { portfolio, user } = await res.json();
             console.log("portfolio", portfolio);
+            console.log("user", user);
+            setPortfolio(portfolio);
+            setUserData(user);
           } else {
             setUnknownUser(true);
           }
@@ -50,7 +62,26 @@ function Username() {
     if (unknownUser) {
       return <div>Unknown user</div>;
     } else {
-      return <div>Welcome to {username}&apos;s portfolio</div>;
+      return (
+        <div
+          style={{
+            backgroundColor: baseColors.background_color,
+          }}
+          className="min-h-screen"
+        >
+          <div className="mx-auto w-5/6">
+            <UserHelloSection userData={userData!} portfolioData={portfolio!} />
+            {portfolio?.sections?.map((section: Section, index) => (
+              <div key={index}>
+                <SectionComponent
+                  key={index}
+                  sectionInformation={section as Section}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
     }
   }
 }
