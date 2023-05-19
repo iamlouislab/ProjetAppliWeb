@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useContext, useState } from "react";
+import React, { useContext } from "react";
 import { SearchProfile } from "./SearchProfile";
 import Link from "next/link";
 import { AuthContext } from "../contexts/authContext";
@@ -19,8 +19,8 @@ function Navbar() {
     }
   };
   return (
-    <nav className="border-gray-200 bg-white px-2 dark:border-gray-700 dark:bg-gray-900 ">
-      <div className="container mx-auto py-3 flex flex-wrap items-center justify-between">
+    <nav className="border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 ">
+      <div className="container mx-auto py-3 flex flex-wrap items-center justify-between px-2">
         <Link href="/" className="flex items-center">
           <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
             Portfolio Generator
@@ -36,6 +36,7 @@ function Navbar() {
           </button>
         </div>
       </div>
+      <div className="border-b border-gray-200 dark:border-gray-700"></div>
     </nav>
   );
 }
