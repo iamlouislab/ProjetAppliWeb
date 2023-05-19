@@ -1,17 +1,23 @@
-import { useState, useContext } from "react";
-import { AuthContext } from "../../contexts/authContext";
 import Router from "next/router";
-import { authFetch } from "utils/authFetch";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "@/contexts/authContext";
 
-const LoginPage = () => {
+enum FormType {
+  LOGIN,
+  REGISTER,
+}
+
+const LoginCard: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [description, setDescription] = useState("");
+  const [githubLink, setGithubLink] = useState("");
+  const [formType, setFormType] = useState(FormType.LOGIN);
   const [error, setError] = useState("");
+
   const authContext = useContext(AuthContext);
 
-  const handleSubmit = async () => {
+  const handleLogin = async () => {
     if (!authContext) {
       setError("An error occurred. Please try again.");
       return;
@@ -47,33 +53,112 @@ const LoginPage = () => {
     }
   };
 
+  const handleRegister = async () => {
+    // Add your register logic here
+    try {
+      // Perform registration API call
+    } catch (error) {
+      setError("An error occurred. Please try again.");
+      return;
+    }
+  };
+
+  const toggleFormType = () => {
+    setFormType((prevFormType) =>
+      prevFormType === FormType.LOGIN ? FormType.REGISTER : FormType.LOGIN
+    );
+  };
+
   return (
-    <div className="flex flex-col gap-4 items-center justify-center bg-gray-200 w-1/2 mx-auto rounded">
-      <div className="flex flex-col gap-4">
-        <h1 className="text-3xl font-bold text-center">Login</h1>
-        {error && <p className="text-red-500">{error}</p>}
-      </div>
-      <div className="flex flex-col gap-2">
-        <Input
+    <div className="bg-white shadow-md rounded-lg p-6 w-1/2 mx-auto mt-10">
+      {formType === FormType.LOGIN ? (
+        <h2 className="text-2xl font-bold mb-4">Login</h2>
+      ) : (
+        <h2 className="text-2xl font-bold mb-4">Register</h2>
+      )}
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+      <div className="mb-4">
+        <label
+          htmlFor="username"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Username
+        </label>
+        <input
           type="text"
-          placeholder="Username"
+          id="username"
+          className="border border-gray-400 p-2 w-full rounded"
           value={username}
-          className="bg-white"
           onChange={(e) => setUsername(e.target.value)}
         />
-        <Input
+      </div>
+      <div className="mb-4">
+        <label
+          htmlFor="password"
+          className="block text-gray-700 font-bold mb-2"
+        >
+          Password
+        </label>
+        <input
           type="password"
-          placeholder="Password"
+          id="password"
+          className="border border-gray-400 p-2 w-full rounded"
           value={password}
-          className="bg-white"
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button onClick={handleSubmit} variant={"destructive"}>
-          Login
-        </Button>
+      </div>
+      {formType === FormType.REGISTER && (
+        <div className="mb-4">
+          <label
+            htmlFor="description"
+            className="block text-gray-700 font-bold mb-2"
+          >
+            Description
+          </label>
+          <input
+            type="text"
+            id="description"
+            className="border border-gray-400 p-2 w-full rounded"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
+      )}
+      {formType === FormType.REGISTER && (
+        <div className="mb-4">
+          <label
+            htmlFor="githubLink"
+            className="block text-gray-700 font-bold mb-2"
+          >
+            GitHub Link
+          </label>
+          <input
+            type="text"
+            id="githubLink"
+            className="border border-gray-400 p-2 w-full rounded"
+            value={githubLink}
+            onChange={(e) => setGithubLink(e.target.value)}
+          />
+        </div>
+      )}
+      <div className="flex justify-between items-center">
+        <div
+          className="hover:underline cursor-pointer"
+          onClick={toggleFormType}
+        >
+          {formType === FormType.LOGIN
+            ? "No account yet? Register"
+            : "Already have an account? Login"}
+        </div>
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          onClick={formType === FormType.LOGIN ? handleLogin : handleRegister}
+        >
+          {formType === FormType.LOGIN ? "Login" : "Register"}
+        </button>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default LoginCard;
