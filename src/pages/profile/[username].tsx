@@ -6,6 +6,7 @@ import UserHelloSection from "@/components/UserHelloSection";
 import Portfolio from "@/types/Portfolio";
 import Section from "@/types/Section";
 import SectionComponent from "@/components/SectionComponent";
+import User from "@/types/User";
 
 function Username() {
   const router = useRouter();
