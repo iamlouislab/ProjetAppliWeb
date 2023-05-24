@@ -15,7 +15,7 @@ const useUserData = () => {
 
     // Call your API
     const res = await fetch(
-      "http://localhost:8080/ProjetAppliWeb/rest/users/getPortfolioByUsername/" +
+      "http://localhost:8080/ProjetAppliWeb/rest/portfolio/getPortfolioByUsername/" +
         authContext.user.username,
       {
         method: "GET",
@@ -37,7 +37,7 @@ const useUserData = () => {
   const swrOptions = {
     revalidateOnFocus: false, // Don't revalidate when the window gains focus
     revalidateOnReconnect: false, // Don't revalidate when the network reconnects
-    dedupingInterval: 60 * 1000, // Deduplicate requests within 1 minute
+    dedupingInterval: 1000 * 60,
   };
 
   const {
