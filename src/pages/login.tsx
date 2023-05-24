@@ -41,8 +41,7 @@ const LoginCard: React.FC = () => {
         localStorage.setItem("user", JSON.stringify(user));
         authContext.setUser(user);
         console.log("user", user);
-        // Redirect to home page
-        Router.push("/");
+        Router.push("/profile");
       } else {
         // Handle error
         setError("Invalid username or password. Please try again.");
@@ -54,9 +53,36 @@ const LoginCard: React.FC = () => {
   };
 
   const handleRegister = async () => {
-    // Add your register logic here
+    if (!authContext) {
+      setError("An error occurred. Please try again.");
+      return;
+    }
+
     try {
-      // Perform registration API call
+      const res = await fetch(
+        "http://localhost:8080/ProjetAppliWeb/rest/users/register",
+        {
+          method: "POST",
+          body: JSON.stringify({ username, password, description, githubLink }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("res", res);
+
+      if (res.ok) {
+        const { token, user } = await res.json();
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        authContext.setUser(user);
+        console.log("user", user);
+        Router.push("/profile");
+      } else {
+        // Handle error
+        setError("Invalid username or password. Please try again.");
+      }
     } catch (error) {
       setError("An error occurred. Please try again.");
       return;

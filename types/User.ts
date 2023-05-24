@@ -5,3 +5,5 @@ type User = {
     password: string;
     githubLink: string;
 }
+
+export default User;

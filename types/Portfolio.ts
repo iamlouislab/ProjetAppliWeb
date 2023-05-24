@@ -1,4 +1,5 @@
 import Section from "./Section";
+import User from "./User";
 
 type Portfolio = {
     id: number;
