@@ -29,7 +29,7 @@ function Navbar() {
         <div className="flex gap-5">
           <SearchProfile />
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
             onClick={handleLoginClick}
           >
             {authContext?.user ? "Logout" : "Login"}
