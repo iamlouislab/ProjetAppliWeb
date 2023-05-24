@@ -44,6 +44,7 @@ import Section from "@/types/Section";
 import Card from "@/types/Card";
 import { authFetch } from "@/utils/authFetch";
 import withAuthentication from "@/hoc/withAuthentification";
+import User from "@/types/User";
 
 function profile() {
   const { userData, isLoading, errorMessage } = useUserData();
@@ -75,15 +76,8 @@ function profile() {
           Welcome to your profile, here you can edit your portfolio.
         </div>
         <div className="flex w-1/2 flex-row justify-start gap-2">
-          <CreateCardButton
-            user_id={userData.user.id}
-            sections={userData.sections}
-          />
-          {/* user should never be null */}
-          <CreateSectionButton
-            user_id={userData.user.id}
-            portfolio_id={userData.id}
-          />
+          <CreateCardButton user={userData.user} sections={userData.sections} />
+          <CreateSectionButton user={userData.user} portfolio={userData} />
         </div>
       </div>
       <div className="mx-auto flex w-5/6 flex-col gap-10 pt-8">
@@ -252,10 +246,10 @@ const DeleteCardButton = ({ card }: { card: Card }) => {
 };
 
 const CreateCardButton = ({
-  user_id,
+  user,
   sections,
 }: {
-  user_id: number;
+  user: User;
   sections: Section[];
 }) => {
   const [title, setTitle] = useState<string>("");
@@ -265,8 +259,8 @@ const CreateCardButton = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [selectedSectionId, setSelectedSectionId] = useState<number | null>(
-    null
+  const [selectedSection, setSelectedSection] = useState<Section>(
+    null as unknown as Section
   );
 
   const createCard = async ({
@@ -280,21 +274,21 @@ const CreateCardButton = ({
   }) => {
     setLoading(true);
 
-    if (!selectedSectionId) {
+    if (!selectedSection) {
       setError("Please select a section");
       setLoading(false);
       return;
     }
 
     console.log("Creating card with title: ", title);
-    const res = await authFetch("/cards/create", {
+    const res = await authFetch("/cards/createCard", {
       method: "POST",
       body: JSON.stringify({
         title,
         description,
         link,
-        section_id: selectedSectionId,
-        user_id: user_id,
+        section: selectedSection,
+        user: user,
       }),
     });
 
@@ -365,7 +359,11 @@ const CreateCardButton = ({
               Section (choose from existing ones)
             </Label>
             <Select
-              onValueChange={(value) => setSelectedSectionId(parseInt(value))}
+              onValueChange={(value) =>
+                setSelectedSection(
+                  sections.find((section) => section.title === value) as Section
+                )
+              }
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Section" />
@@ -373,7 +371,7 @@ const CreateCardButton = ({
               <SelectContent>
                 {sections.map((section) => (
                   <div key={section.id}>
-                    <SelectItem value={section.id as unknown as string}>
+                    <SelectItem value={section.title}>
                       {section.title}
                     </SelectItem>
                   </div>
@@ -399,11 +397,11 @@ const CreateCardButton = ({
 };
 
 const CreateSectionButton = ({
-  user_id,
-  portfolio_id,
+  user,
+  portfolio,
 }: {
-  user_id: number;
-  portfolio_id: number;
+  user: User;
+  portfolio: Portfolio;
 }) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -419,15 +417,28 @@ const CreateSectionButton = ({
   }) => {
     setLoading(true);
 
-    const res = await authFetch("/sections/create", {
+    const res = await fetch(
+      "http://localhost:8080/rest/section/createSection",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          title,
+          description,
+          portfolio: portfolio,
+          cards: [],
+        }),
+      }
+    );
+
+    /* const res = await authFetch("section/createSection", {
       method: "POST",
       body: JSON.stringify({
         title,
         description,
-        user_id,
-        portfolio_id,
+        portfolio: portfolio,
+        cards: []
       }),
-    });
+    }); */
 
     if (res.status === 200) {
       window.location.reload();
@@ -494,4 +505,4 @@ const CreateSectionButton = ({
   );
 };
 
-export default withAuthentication(profile);
+export default profile;
