@@ -2,6 +2,7 @@ import React from "react";
 import { baseColors } from "@/lib/utils";
 import Portfolio from "@/types/Portfolio";
 import { GithubIcon } from "lucide-react";
+import User from "@/types/User";
 
 function UserHelloSection({
   userData,
@@ -43,9 +44,8 @@ function UserHelloSection({
               >
                 <GithubIcon
                   size={24}
-                  style={{ color: baseColors.text_major_color }}
+                  style={{ color: baseColors.text_minor_color }}
                 />
-                ;
               </a>
             </div>
           </div>
