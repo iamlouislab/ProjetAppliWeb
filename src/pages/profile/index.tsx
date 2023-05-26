@@ -50,7 +50,7 @@ function profile() {
   const { userData, isLoading, errorMessage } = useUserData();
 
   // get the list of cards that are in all the sectinos
-  const cards = userData?.sections.map((section) => section.cards).flat();
+  const cards = userData?.sections?.flatMap((section) => section.cards) ?? [];
 
   if (isLoading || !userData) {
     return <div>Loading...</div>;
@@ -173,8 +173,8 @@ const CardRow = ({ card }: { card: Card }) => {
   return (
     <div className="flex flex-row items-center justify-between gap-10 rounded bg-slate-100 py-2 text-2xl text-black">
       <div className="flex flex-row items-start">
-        <div className="ml-2">{card.title}</div>
-        <div className="ml-2">{card.description}</div>
+        <div className="ml-2">{card?.title}</div>
+        <div className="ml-2">{card?.description}</div>
       </div>
       <div className="flex flex-row items-center gap-2 rounded bg-slate-100 py-2 text-2xl text-black">
         <div className="mr-2">
@@ -387,7 +387,7 @@ const CreateCardButton = ({
                 <SelectValue placeholder="Section" />
               </SelectTrigger>
               <SelectContent>
-                {sections.map((section) => (
+                {sections?.map((section) => (
                   <div key={section.id}>
                     <SelectItem value={section.title}>
                       {section.title}
@@ -434,15 +434,15 @@ const CreateSectionButton = ({
     description: string;
   }) => {
     setLoading(true);
+    console.log(portfolio);
     const res = await fetch(
-      "http://localhost:8080/ProjetAppliWeb/rest/section/createSection",
+      "http://localhost:8080/ProjetAppliWeb/rest/section/createSection",// + portfolio.id.toString(),
       {
         method: "POST",
         body: JSON.stringify({
           title,
           description,
-          portfolio: portfolio,
-          cards: [],
+          // userId: user.id,
         }),
         headers: {
           "Content-Type": "application/json",
