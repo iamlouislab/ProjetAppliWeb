@@ -20,26 +20,32 @@ function Navbar() {
     }
   };
   return (
-    <nav className="border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 ">
-      <div className="container mx-auto py-3 flex flex-wrap items-center justify-between px-2">
-        <Link href="/" className="flex items-center">
-          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-            Portfolio Generator
-          </span>
-        </Link>
-        <div className="flex gap-5">
-          <SearchProfile />
-          <button
-            className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
-            onClick={handleLoginClick}
-          >
-            {authContext?.user ? "Logout" : "Login"}
-          </button>
-          {authContext?.user ? <MyProfil/> : ""}
+
+      <nav className="border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 flex-row">
+
+        <div className="mx-4 py-3 flex  items-center justify-between px-20"  >
+        <div className="flex">
+          <img src="logo2.png" />
+          <Link href="/" className="self-center px-3">
+            <span className="text-xl self-center font-semibold dark:text-white">
+              Portfolio Generator
+            </span>
+          </Link>
         </div>
-      </div>
-      <div className="border-b border-gray-200 dark:border-gray-700"></div>
-    </nav>
+
+          <div className="flex gap-5 justify-end h-[40px]">
+            <SearchProfile />
+            <button
+              className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+              onClick={handleLoginClick}
+            >
+              {authContext?.user ? "Logout" : "Login"}
+            </button>
+            {authContext?.user ? <MyProfil/> : ""}
+          </div>
+        </div>
+        <div className="border-b border-gray-200 dark:border-gray-700"></div>
+      </nav>
   );
 }
 

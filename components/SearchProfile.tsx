@@ -13,14 +13,14 @@ export function SearchProfile() {
         onChange={(e) => {
           setSearch(e.target.value);
         }}
-        className="rounded-md pl-3 h-10 mr-5"
+        className="rounded-md pl-3 h-10 mr-5 "
       />
       <button
         type="submit"
         onClick={() => {
           router.push(`/profile/${search}`);
         }}
-        className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
+        className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded h-[40px]">
         Search
       </button>
     </div>
