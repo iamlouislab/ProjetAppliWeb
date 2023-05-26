@@ -22,7 +22,8 @@ function Username() {
       try {
         if (username !== undefined) {
           const res = await fetch(
-            "/portfolio/getPortfolioByUsername/" + username,
+            "http://localhost:8080/ProjetAppliWeb/rest/portfolio/getPortfolioByUsername/" +
+              username,
             {
               method: "GET",
               headers: {
