@@ -70,7 +70,7 @@ function profile() {
 
   return (
     <>
-      <div className="mx-auto flex w-5/6 flex-col gap-2 pt-8">
+      <div className="mx-auto h-screen flex w-5/6 flex-col gap-2 pt-8">
         <div className="text-6xl text-white">Hi!</div>
         <div className="text-2xl text-white">
           Welcome to your profile, here you can edit your portfolio.
@@ -79,8 +79,7 @@ function profile() {
           <CreateCardButton user={userData.user} sections={userData.sections} />
           <CreateSectionButton user={userData.user} portfolio={userData} />
         </div>
-      </div>
-      <div className="mx-auto flex w-5/6 flex-col gap-10 pt-8">
+        <div className="mx-auto flex w-5/6 flex-col gap-10 pt-8">
         <div className="text-2xl text-white">
           <div className="mb-2 text-2xl text-white">Your sections</div>
           <div className="flex flex-col gap-2">
@@ -101,6 +100,8 @@ function profile() {
           </div>
         </div>
       </div>
+      </div>
+      
     </>
   );
 }
@@ -308,14 +309,14 @@ const CreateCardButton = ({
           Create card
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-white">
         <DialogHeader>
           <DialogTitle>Create card</DialogTitle>
           <DialogDescription>Create a new card.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right text-white">
+            <Label htmlFor="title" className="text-right">
               Title
             </Label>
             <Input
@@ -328,7 +329,7 @@ const CreateCardButton = ({
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right text-white">
+            <Label htmlFor="title" className="text-right">
               Description
             </Label>
 
@@ -342,7 +343,7 @@ const CreateCardButton = ({
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="link" className="text-right text-white">
+            <Label htmlFor="link" className="text-right">
               Link
             </Label>
             <Input
@@ -355,8 +356,8 @@ const CreateCardButton = ({
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="section" className="text-right text-white">
-              Section (choose from existing ones)
+            <Label htmlFor="section" className="text-right">
+              Select
             </Label>
             <Select
               onValueChange={(value) =>
@@ -416,14 +417,15 @@ const CreateSectionButton = ({
     description: string;
   }) => {
     setLoading(true);
+    console.log(portfolio)
     const res = await fetch(
-      "http://localhost:8080/ProjetAppliWeb/rest/section/createSection",
+      "http://localhost:8080/ProjetAppliWeb/rest/section/createSection",// + portfolio.id.toString(),
       {
         method: "POST",
         body: JSON.stringify({
           title,
           description,
-          portfolio: portfolio,
+          portfolio:null,
           cards: [],
         }),
         headers: {
@@ -431,7 +433,7 @@ const CreateSectionButton = ({
         },
       }
     );
-
+    
     /* const res = await authFetch("section/createSection", {
       method: "POST",
       body: JSON.stringify({
@@ -458,14 +460,14 @@ const CreateSectionButton = ({
           Create section
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-white">
         <DialogHeader>
           <DialogTitle>Create section</DialogTitle>
           <DialogDescription>Create a new section.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right text-white">
+          <div className="grid grid-cols-4 items-center gap-4 text-black">
+            <Label htmlFor="title" className="text-right">
               Title
             </Label>
             <Input
@@ -478,7 +480,7 @@ const CreateSectionButton = ({
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right text-white">
+            <Label htmlFor="title" className="text-right">
               Description
             </Label>
             <Input
@@ -495,7 +497,7 @@ const CreateSectionButton = ({
           <div className="flex items-center justify-center gap-5">
             {error && <p className="text-red-500">{error}</p>}
             <ButtonLoading
-              text="Create card"
+              text="Create Section"
               loading_text={"Creating..."}
               loading={loading}
               onClick={() => createSection({ title, description })}

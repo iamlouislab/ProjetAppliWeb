@@ -79,7 +79,7 @@ const LoginCard: React.FC = () => {
         localStorage.setItem("user", JSON.stringify(user));
         authContext.setUser(user);
         console.log("user", user);
-        Router.push("/profile");
+        Router.push("/");
       } else {
         // Handle error
         setError("Invalid username or password. Please try again.");
@@ -184,10 +184,15 @@ const LoginCard: React.FC = () => {
           >
             {formType === FormType.LOGIN ? "Login" : "Register"}
           </button>
+          
         </div>
       </div>
       </div>
   );
+
+  
+
+
 };
 
 export default LoginCard;

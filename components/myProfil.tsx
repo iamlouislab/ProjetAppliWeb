@@ -1,27 +1,17 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { Input } from "./ui/input";
 
-export function SearchProfile() {
-  const [search, setSearch] = useState<string>("");
+export function MyProfil() {
   const router = useRouter();
   return (
     <div className="flex w-full max-w-sm items-center space-x-2">
-      <Input
-        type="Profile"
-        placeholder="Username"
-        onChange={(e) => {
-          setSearch(e.target.value);
-        }}
-        className="rounded-md pl-3 h-10 mr-5"
-      />
       <button
         type="submit"
         onClick={() => {
-          router.push(`/profile/${search}`);
+          router.push(`/profile`);
         }}
         className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
-        Search
+        My Profil
       </button>
     </div>
   );

@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import { SearchProfile } from "./SearchProfile";
 import Link from "next/link";
 import { AuthContext } from "../contexts/authContext";
+import { MyProfil } from "./myProfil";
 
 function Navbar() {
   const router = useRouter();
@@ -34,6 +35,7 @@ function Navbar() {
           >
             {authContext?.user ? "Logout" : "Login"}
           </button>
+          {authContext?.user ? <MyProfil/> : ""}
         </div>
       </div>
       <div className="border-b border-gray-200 dark:border-gray-700"></div>
