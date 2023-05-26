@@ -62,6 +62,7 @@ const LoginCard: React.FC = () => {
       const res = await fetch(
         "http://localhost:8080/ProjetAppliWeb/rest/users/register",
         {
+          
           method: "POST",
           body: JSON.stringify({ username, password, description, githubLink }),
           headers: {

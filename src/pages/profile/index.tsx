@@ -304,7 +304,7 @@ const CreateCardButton = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="bg-black">
+        <Button variant="outline" className="bg-black text-white">
           Create card
         </Button>
       </DialogTrigger>
@@ -416,9 +416,8 @@ const CreateSectionButton = ({
     description: string;
   }) => {
     setLoading(true);
-
     const res = await fetch(
-      "http://localhost:8080/rest/section/createSection",
+      "http://localhost:8080/ProjetAppliWeb/rest/section/createSection",
       {
         method: "POST",
         body: JSON.stringify({
@@ -427,6 +426,9 @@ const CreateSectionButton = ({
           portfolio: portfolio,
           cards: [],
         }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
     );
 
@@ -452,7 +454,7 @@ const CreateSectionButton = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="bg-black">
+        <Button variant="outline" className="bg-black text-white">
           Create section
         </Button>
       </DialogTrigger>
