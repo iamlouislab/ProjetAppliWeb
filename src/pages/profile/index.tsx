@@ -80,7 +80,7 @@ function profile() {
               </div>
               <div className="flex flex-row gap-2 mx-auto">
                 <CreateCardButton user={userData.user} sections={userData.sections} />
-                <CreateSectionButton user={userData.user} portfolio={userData} />
+                <CreateSectionButton user={userData.user} portfolioId={userData.id} />
               </div>
             </div>
           </div>
@@ -416,10 +416,10 @@ const CreateCardButton = ({
 
 const CreateSectionButton = ({
   user,
-  portfolio,
+  portfolioId,
 }: {
   user: User;
-  portfolio: Portfolio;
+  portfolioId: Number;
 }) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -434,6 +434,7 @@ const CreateSectionButton = ({
     description: string;
   }) => {
     setLoading(true);
+    console.log(portfolioId)
     const res = await fetch(
       "http://localhost:8080/ProjetAppliWeb/rest/section/createSection",
       {
@@ -441,8 +442,7 @@ const CreateSectionButton = ({
         body: JSON.stringify({
           title,
           description,
-          portfolio: portfolio,
-          cards: [],
+          portfolioId,
         }),
         headers: {
           "Content-Type": "application/json",
