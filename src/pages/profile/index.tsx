@@ -299,15 +299,17 @@ const CreateCardButton = ({
     }
 
     console.log("Creating card with title: ", title);
-    const res = await authFetch("/cards/createCard", {
+    const res = await fetch("http://localhost:8080/ProjetAppliWeb/rest/card/createCard", {
       method: "POST",
       body: JSON.stringify({
         title,
         description,
         link,
-        section: selectedSection,
-        user: user,
+        sectionId: selectedSection.id,
       }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     if (res.status === 200) {
