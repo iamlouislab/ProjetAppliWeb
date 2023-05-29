@@ -66,7 +66,8 @@ function Username() {
       return (
         <div
           style={{
-            backgroundColor: baseColors.background_color,
+            backgroundColor:
+              userData?.backgroundColor || baseColors.background_color,
           }}
           className="min-h-screen"
         >

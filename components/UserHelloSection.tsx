@@ -42,13 +42,10 @@ function UserHelloSection({
                   backgroundColor: baseColors.text_major_color,
                 }}
               >
-                <div className="w+[60px]">
-                  <GithubIcon 
-                    size={28}
-                    style={{ color: baseColors.text_minor_color }}
-                  />
-                </div>
-                ;
+                <GithubIcon
+                  size={24}
+                  style={{ color: baseColors.text_minor_color }}
+                />
               </a>
             </div>
           </div>
