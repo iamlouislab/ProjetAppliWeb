@@ -17,6 +17,8 @@ const SectionComponent = ({
         title: card.title,
         description: card.description,
         link: card.link,
+        imageUrl: card.imageUrl,
+        color: card.color,
       }}
     ></CardComponent>
   ));
