@@ -1,4 +1,4 @@
-  import React, { useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useRouter } from "next/router";
 import { Trash } from "lucide-react";
 
@@ -45,6 +45,7 @@ import Card from "@/types/Card";
 import { authFetch } from "@/utils/authFetch";
 import withAuthentication from "@/hoc/withAuthentification";
 import User from "@/types/User";
+import ColorPicker from "@/components/ColorPicker";
 
 function profile() {
   const { userData, isLoading, errorMessage } = useUserData();
@@ -72,52 +73,64 @@ function profile() {
     <div className="bg-black h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mt-10 flex flex-col gap-8 content-center">
-          <div className="text-white p-6 shadow-md grid gap-16 " style={{ backgroundColor: "#0c0c0c" }}>
+          <div
+            className="text-white p-6 shadow-md grid gap-16 "
+            style={{ backgroundColor: "#0c0c0c" }}
+          >
             <div className="mx-auto flex w-5/6 flex-col gap-2 p-8 ">
-              <div className="text-6xl  text-white text-center">Welcome back!</div>
+              <div className="text-6xl  text-white text-center">
+                Welcome back!
+              </div>
               <div className="text-2xl text-white text-center">
                 There you can edit your portfolio.
               </div>
               <div className="flex flex-row gap-2 mx-auto">
-                <CreateCardButton user={userData.user} sections={userData.sections} />
-                <CreateSectionButton user={userData.user} portfolio={userData} />
+                <CreateCardButton
+                  user={userData.user}
+                  sections={userData.sections}
+                />
+                <CreateSectionButton
+                  user={userData.user}
+                  portfolio={userData}
+                />
               </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="mt-10 flex flex-col gap-8 content-center">
-          <div className="text-white p-6 shadow-md grid gap-16 " style={{ backgroundColor: "#0c0c0c" }}>
-            <div className="mx-auto flex w-5/6 flex-col gap-2 ">
-              <div className="text-2xl text-white">
-                Your sections
-              </div>
-              <div className="flex flex-col gap-2">
-              <SectionRowHeader />
-              {userData.sections.map((section, index) => (
-                <SectionRow section={section} key={index} />
-              ))}
-            </div>
             </div>
           </div>
         </div>
 
         <div className="mt-10 flex flex-col gap-8 content-center">
-          <div className="text-white p-6 shadow-md grid gap-16 " style={{ backgroundColor: "#0c0c0c" }}>
+          <div
+            className="text-white p-6 shadow-md grid gap-16 "
+            style={{ backgroundColor: "#0c0c0c" }}
+          >
             <div className="mx-auto flex w-5/6 flex-col gap-2 ">
-              <div className="text-2xl text-white">
-              Your cards
-              </div>
+              <div className="text-2xl text-white">Your sections</div>
               <div className="flex flex-col gap-2">
-              <CardRowHeader />
-              {cards?.map((card, index) => (
-                <CardRow card={card} key={index} />
-              ))}
-            </div>
+                <SectionRowHeader />
+                {userData.sections.map((section, index) => (
+                  <SectionRow section={section} key={index} />
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
+        <div className="mt-10 flex flex-col gap-8 content-center">
+          <div
+            className="text-white p-6 shadow-md grid gap-16 "
+            style={{ backgroundColor: "#0c0c0c" }}
+          >
+            <div className="mx-auto flex w-5/6 flex-col gap-2 ">
+              <div className="text-2xl text-white">Your cards</div>
+              <div className="flex flex-col gap-2">
+                <CardRowHeader />
+                {cards?.map((card, index) => (
+                  <CardRow card={card} key={index} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -273,6 +286,8 @@ const CreateCardButton = ({
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [link, setLink] = useState<string>("");
+  const [color, setColor] = useState<string>("#000000");
+  const [imageUrl, setImageUrl] = useState<string>("");
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -285,10 +300,14 @@ const CreateCardButton = ({
     title,
     description,
     link,
+    color,
+    imageUrl,
   }: {
     title: string;
     description: string;
     link: string;
+    color: string;
+    imageUrl: string;
   }) => {
     setLoading(true);
 
@@ -307,6 +326,7 @@ const CreateCardButton = ({
         link,
         section: selectedSection,
         user: user,
+        color: color,
       }),
     });
 
@@ -398,6 +418,25 @@ const CreateCardButton = ({
             </Select>
           </div>
         </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="color" className="block text-gray-700 font-bold mb-2">
+            Color
+          </Label>
+          <ColorPicker initialColor={color} onChange={setColor} />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="imageUrl" className="text-right">
+            Image Url
+          </Label>
+          <Input
+            id="imageUrl"
+            value={imageUrl}
+            className="col-span-3"
+            onChange={(e) => {
+              setImageUrl(e.target.value);
+            }}
+          />
+        </div>
         <DialogFooter>
           <div className="flex items-center justify-center gap-5">
             {error && <p className="text-red-500">{error}</p>}
@@ -405,7 +444,9 @@ const CreateCardButton = ({
               text="Create card"
               loading_text={"Creating..."}
               loading={loading}
-              onClick={() => createCard({ title, description, link })}
+              onClick={() =>
+                createCard({ title, description, link, color, imageUrl })
+              }
             />
           </div>
         </DialogFooter>
@@ -436,7 +477,7 @@ const CreateSectionButton = ({
     setLoading(true);
     console.log(portfolio);
     const res = await fetch(
-      "http://localhost:8080/ProjetAppliWeb/rest/section/createSection",// + portfolio.id.toString(),
+      "http://localhost:8080/ProjetAppliWeb/rest/section/createSection", // + portfolio.id.toString(),
       {
         method: "POST",
         body: JSON.stringify({
@@ -449,16 +490,6 @@ const CreateSectionButton = ({
         },
       }
     );
-
-    /* const res = await authFetch("section/createSection", {
-      method: "POST",
-      body: JSON.stringify({
-        title,
-        description,
-        portfolio: portfolio,
-        cards: []
-      }),
-    }); */
 
     if (res.status === 200) {
       window.location.reload();
