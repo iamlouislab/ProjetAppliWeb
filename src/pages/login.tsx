@@ -1,6 +1,12 @@
 import Router from "next/router";
 import React, { useState, useContext } from "react";
 import { AuthContext } from "@/contexts/authContext";
+import { Button } from "@/components/ui/button";
+import { SketchPicker } from "react-color";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import ColorPicker from "@/components/ColorPicker";
+import CardComponent from "@/components/CardComponent";
 
 enum FormType {
   LOGIN,
@@ -12,6 +18,7 @@ const LoginCard: React.FC = () => {
   const [password, setPassword] = useState("");
   const [description, setDescription] = useState("");
   const [githubLink, setGithubLink] = useState("");
+  const [backgroundColor, setBackgroundColor] = useState("#fff");
   const [formType, setFormType] = useState(FormType.LOGIN);
   const [error, setError] = useState("");
 
@@ -62,9 +69,14 @@ const LoginCard: React.FC = () => {
       const res = await fetch(
         "http://localhost:8080/ProjetAppliWeb/rest/users/register",
         {
-          
           method: "POST",
-          body: JSON.stringify({ username, password, description, githubLink }),
+          body: JSON.stringify({
+            username,
+            password,
+            description,
+            githubLink,
+            color: backgroundColor,
+          }),
           headers: {
             "Content-Type": "application/json",
           },
@@ -106,13 +118,13 @@ const LoginCard: React.FC = () => {
         )}
         {error && <p className="text-red-500 mb-4">{error}</p>}
         <div className="mb-4">
-          <label
+          <Label
             htmlFor="username"
             className="block text-gray-700 font-bold mb-2"
           >
             Username
-          </label>
-          <input
+          </Label>
+          <Input
             type="text"
             id="username"
             className="border border-gray-400 p-2 w-full rounded"
@@ -169,6 +181,20 @@ const LoginCard: React.FC = () => {
             />
           </div>
         )}
+        {formType === FormType.REGISTER && (
+          <div className="mb-4">
+            <label
+              htmlFor="color"
+              className="block text-gray-700 font-bold mb-2"
+            >
+              Color
+            </label>
+            <ColorPicker
+              initialColor={backgroundColor}
+              onChange={setBackgroundColor}
+            />
+          </div>
+        )}
         <div className="flex justify-between items-center">
           <div
             className="hover:underline cursor-pointer"
@@ -184,15 +210,10 @@ const LoginCard: React.FC = () => {
           >
             {formType === FormType.LOGIN ? "Login" : "Register"}
           </button>
-          
         </div>
       </div>
-      </div>
+    </div>
   );
-
-  
-
-
 };
 
 export default LoginCard;
