@@ -85,14 +85,8 @@ function profile() {
                 There you can edit your portfolio.
               </div>
               <div className="flex flex-row gap-2 mx-auto">
-                <CreateCardButton
-                  user={userData.user}
-                  sections={userData.sections}
-                />
-                <CreateSectionButton
-                  user={userData.user}
-                  portfolio={userData}
-                />
+                <CreateCardButton user={userData.user} sections={userData.sections} />
+                <CreateSectionButton user={userData.user} portfolioId={userData.id} />
               </div>
             </div>
           </div>
@@ -318,16 +312,18 @@ const CreateCardButton = ({
     }
 
     console.log("Creating card with title: ", title);
-    const res = await authFetch("/cards/createCard", {
+    const res = await fetch("http://localhost:8080/ProjetAppliWeb/rest/card/createCard", {
       method: "POST",
       body: JSON.stringify({
         title,
         description,
         link,
-        section: selectedSection,
-        user: user,
+        sectionId: selectedSection.id,
         color: color,
       }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     if (res.status === 200) {
@@ -457,10 +453,10 @@ const CreateCardButton = ({
 
 const CreateSectionButton = ({
   user,
-  portfolio,
+  portfolioId,
 }: {
   user: User;
-  portfolio: Portfolio;
+  portfolioId: Number;
 }) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -475,7 +471,7 @@ const CreateSectionButton = ({
     description: string;
   }) => {
     setLoading(true);
-    console.log(portfolio);
+    console.log(portfolioId)
     const res = await fetch(
       "http://localhost:8080/ProjetAppliWeb/rest/section/createSection", // + portfolio.id.toString(),
       {
@@ -483,7 +479,7 @@ const CreateSectionButton = ({
         body: JSON.stringify({
           title,
           description,
-          // userId: user.id,
+          portfolioId,
         }),
         headers: {
           "Content-Type": "application/json",

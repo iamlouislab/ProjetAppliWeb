@@ -22,8 +22,7 @@ function Username() {
       try {
         if (username !== undefined) {
           const res = await fetch(
-            "http://localhost:8080/ProjetAppliWeb/rest/portfolio/getPortfolioByUsername/" +
-              username,
+            "http://localhost:8080/ProjetAppliWeb/rest/portfolio/getPortfolioByUsername/" + username,
             {
               method: "GET",
               headers: {
@@ -62,7 +61,7 @@ function Username() {
     );
   } else {
     if (unknownUser) {
-      return <div>Unknown user</div>;
+      return <div className="text-white">Unknown user</div>;
     } else {
       return (
         <div
