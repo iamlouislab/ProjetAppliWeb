@@ -4,19 +4,13 @@ import { baseColors } from "@/lib/utils";
 import Card from "@/types/Card";
 
 function CardComponent({ cardInformation }: { cardInformation: Card }) {
-  const initialColor = "black";
-  const hoveredColor = "gray";
-  const [color, setColor] = useState(initialColor);
-
   return (
     <div
-      className="mx-5 mt-5 h-[330px] transform overflow-hidden rounded-lg transition hover:-translate-y-2"
+      className="mx-5 mt-5 transform overflow-hidden rounded-lg transition hover:-translate-y-2"
       style={{
         color: baseColors.background_color,
-        backgroundColor: color ?? color,
+        backgroundColor: cardInformation.color ?? "black",
       }}
-      onMouseEnter={() => setColor(hoveredColor)}
-      onMouseLeave={() => setColor(initialColor)}
     >
       <a href={cardInformation.link ?? "/"}>
         <div className="w-full p-5">
@@ -37,6 +31,11 @@ function CardComponent({ cardInformation }: { cardInformation: Card }) {
             {cardInformation.description}
           </p>
         </div>
+        <img
+          src={cardInformation.imageUrl ?? "/"}
+          alt={cardInformation.title}
+          className="object-cover w-full h-48"
+        />
       </a>
     </div>
   );
