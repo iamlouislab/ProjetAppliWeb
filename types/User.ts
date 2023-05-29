@@ -4,6 +4,7 @@ type User = {
     description: string
     password: string;
     githubLink: string;
+    backgroundColor: string;
 }
 
 export default User;

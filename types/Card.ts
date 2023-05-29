@@ -3,6 +3,8 @@ type Card = {
     title: string;
     description: string;
     link: string;
+    imageUrl: string;
+    color: string;
 }
 
 export default Card;
