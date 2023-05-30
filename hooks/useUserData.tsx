@@ -26,7 +26,9 @@ const useUserData = () => {
     );
 
     if (res.ok) {
-      const { portfolio } = await res.json();
+      const { portfolio, user } = await res.json();
+      portfolio.user = user;
+      console.log("fetched user data: ", portfolio);
       return portfolio as Portfolio;
     } else {
       console.log("error useUserPortfolio: " + error.message);

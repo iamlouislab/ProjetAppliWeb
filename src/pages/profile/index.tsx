@@ -36,16 +36,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { baseColors } from "../../../lib/utils";
 import { AuthContext } from "@/contexts/authContext";
-import Portfolio from "@/types/Portfolio";
 import useUserData from "@/hooks/useUserData";
 import Section from "@/types/Section";
 import Card from "@/types/Card";
 import { authFetch } from "@/utils/authFetch";
 import withAuthentication from "@/hoc/withAuthentification";
-import User from "@/types/User";
 import ColorPicker from "@/components/ColorPicker";
+import { Loading } from "@/components/Loading";
+import { AvatarPicker } from "@/components/AvatarPicker";
+import User from "@/types/User";
 
 function profile() {
   const { userData, isLoading, errorMessage } = useUserData();
@@ -54,7 +54,11 @@ function profile() {
   const cards = userData?.sections?.flatMap((section) => section.cards) ?? [];
 
   if (isLoading || !userData) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loading />
+      </div>
+    );
   }
 
   if (errorMessage) {
@@ -73,20 +77,33 @@ function profile() {
     <div className="bg-black h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mt-10 flex flex-col gap-8 content-center">
-          <div
-            className="text-white p-6 shadow-md grid gap-16 "
-            style={{ backgroundColor: "#0c0c0c" }}
-          >
-            <div className="mx-auto flex w-5/6 flex-col gap-2 p-8 ">
-              <div className="text-6xl  text-white text-center">
-                Welcome back!
-              </div>
-              <div className="text-2xl text-white text-center">
-                There you can edit your portfolio.
-              </div>
-              <div className="flex flex-row gap-2 mx-auto">
-                <CreateCardButton user={userData.user} sections={userData.sections} />
-                <CreateSectionButton user={userData.user} portfolioId={userData.id} />
+          <div className="flex justify-center items-center"
+                style={{ backgroundColor: "#171717" }}>
+            <AvatarPicker handleChange={async (avatarUrl) => {
+              console.log("userData", userData);
+              userData.user.avatarUrl = avatarUrl ?? "";
+              await fetch("http://localhost:8080/ProjetAppliWeb/rest/users/updateUser/", {
+                method: "PUT",
+                body: JSON.stringify(userData.user),
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              });
+            }} user={userData.user} />
+            <div
+              className="text-white p-6 shadow-md grid gap-16 "
+            >
+              <div className="mx-auto flex w-full flex-col gap-2 p-8 ">
+                <div className="text-6xl  text-white text-center">
+                  Welcome back!
+                </div>
+                <div className="text-2xl text-white text-center">
+                  There you can edit your portfolio.
+                </div>
+                <div className="flex flex-row gap-2 mx-auto">
+                  <CreateCardButton user={userData.user} sections={userData.sections} />
+                  <CreateSectionButton user={userData.user} portfolioId={userData.id} />
+                </div>
               </div>
             </div>
           </div>
@@ -95,7 +112,7 @@ function profile() {
         <div className="mt-10 flex flex-col gap-8 content-center">
           <div
             className="text-white p-6 shadow-md grid gap-16 "
-            style={{ backgroundColor: "#0c0c0c" }}
+            style={{ backgroundColor: "#171717" }}
           >
             <div className="mx-auto flex w-5/6 flex-col gap-2 ">
               <div className="text-2xl text-white">Your sections</div>
@@ -112,7 +129,7 @@ function profile() {
         <div className="mt-10 flex flex-col gap-8 content-center">
           <div
             className="text-white p-6 shadow-md grid gap-16 "
-            style={{ backgroundColor: "#0c0c0c" }}
+            style={{ backgroundColor: "#171717" }}
           >
             <div className="mx-auto flex w-5/6 flex-col gap-2 ">
               <div className="text-2xl text-white">Your cards</div>
@@ -214,7 +231,7 @@ const DeleteSectionButton = ({ section }: { section: Section }) => {
       <AlertDialogTrigger>
         <Trash />
       </AlertDialogTrigger>
-      <AlertDialogContent  className = "bg-white">
+      <AlertDialogContent className="bg-white">
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -258,7 +275,7 @@ const DeleteCardButton = ({ card }: { card: Card }) => {
       <AlertDialogTrigger>
         <Trash />
       </AlertDialogTrigger>
-      <AlertDialogContent  className = "bg-white">
+      <AlertDialogContent className="bg-white">
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>

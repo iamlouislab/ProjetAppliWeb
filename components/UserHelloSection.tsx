@@ -6,13 +6,17 @@ import User from "@/types/User";
 
 function UserHelloSection({
   userData,
-  portfolioData,
 }: {
   userData: User;
-  portfolioData: Portfolio;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 pt-28 md:flex-row md:gap-14">
+    <div className="flex gap-2 justify-around items-center pt-8">
+      <img
+        className="w-44 h-44 rounded-full"
+        src={userData.avatarUrl ?? "https://sd-160040.dedibox.fr/hagimont/photo/Daniel1.jpg"}
+        alt="avatar"
+      />
+      <div className="flex flex-col items-center justify-center gap-3 md:flex-row md:gap-14">
       <div className="flex flex-col items-center justify-center">
         <div className="text-center">
           <h1
@@ -51,6 +55,7 @@ function UserHelloSection({
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
