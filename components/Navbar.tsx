@@ -4,6 +4,7 @@ import { SearchProfile } from "./SearchProfile";
 import Link from "next/link";
 import { AuthContext } from "../contexts/authContext";
 import { MyProfil } from "./myProfil";
+import User from "@/types/User";
 
 function Navbar() {
   const router = useRouter();
@@ -13,7 +14,7 @@ function Navbar() {
     if (authContext?.user) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      authContext?.setUser(null);
+      authContext?.setUser(null as unknown as User);
       router.push("/login");
     } else {
       router.push("/login");
@@ -25,11 +26,13 @@ function Navbar() {
 
         <div className="mx-4 py-3 flex  items-center justify-between px-20"  >
         <div className="flex">
-          <img src="logo2.png" />
           <Link href="/" className="self-center px-3">
-            <span className="text-xl self-center font-semibold dark:text-white">
-              Portfolio Generator
-            </span>
+            <div className="flex gap-4">
+              <img src="logo2.png" />
+              <span className="text-xl self-center font-semibold dark:text-white">
+                Portfolio Generator
+              </span>
+            </div>
           </Link>
         </div>
 
