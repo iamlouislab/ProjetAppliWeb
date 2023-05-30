@@ -46,6 +46,7 @@ import ColorPicker from "@/components/ColorPicker";
 import { Loading } from "@/components/Loading";
 import { AvatarPicker } from "@/components/AvatarPicker";
 import User from "@/types/User";
+import { CardImgPicker } from "@/components/CardImgPicker";
 
 function profile() {
   const { userData, isLoading, errorMessage } = useUserData();
@@ -195,8 +196,20 @@ const CardRow = ({ card }: { card: Card }) => {
         <div className="ml-2">{card?.title}</div>
         <div className="ml-2">{card?.description}</div>
       </div>
+      <div className="ml-50">
+            <CardImgPicker handleChange={async (imageUrl) => {
+              card.imageUrl = imageUrl ?? "";
+              await fetch("http://localhost:8080/ProjetAppliWeb/rest/card/updateCard/", {
+                  method: "PUT",
+                  body: JSON.stringify(card),
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                });
+              }} card = {card} /> 
+          </div>
       <div className="flex flex-row items-center gap-2 rounded bg-slate-100 py-2 text-2xl text-black">
-        <div className="mr-2">
+        <div className="mr-2 ">
           <DeleteCardButton card={card} />
         </div>
       </div>

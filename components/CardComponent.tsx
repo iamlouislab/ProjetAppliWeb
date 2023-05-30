@@ -32,7 +32,7 @@ function CardComponent({ cardInformation }: { cardInformation: Card }) {
           </p>
         </div>
         <img
-          src={cardInformation.imageUrl ?? "/"}
+          src={cardInformation.imageUrl ?? "https://wallpaperaccess.com/full/334698.jpg"}
           alt={cardInformation.title}
           className="object-cover w-full h-48"
         />
