@@ -136,7 +136,6 @@ const SectionRowHeader = () => {
       <div className="flex flex-row ">
         <div className="ml-2">Title</div>
         <div className="ml-2">Description</div>
-        <div className="ml-2">Cards</div>
       </div>
       <div className="flex flex-row gap-2 rounded py-2 text-2xl font-bold text-black">
         <div className="mr-2">Actions</div>
@@ -151,7 +150,6 @@ const CardRowHeader = () => {
       <div className="flex flex-row">
         <div className="ml-2">Title</div>
         <div className="ml-2">Description</div>
-        <div className="ml-2">Keywords</div>
       </div>
       <div className="flex flex-row gap-2 rounded py-2 text-2xl font-bold text-black">
         <div className="mr-2">Actions</div>
@@ -216,7 +214,7 @@ const DeleteSectionButton = ({ section }: { section: Section }) => {
       <AlertDialogTrigger>
         <Trash />
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent  className = "bg-white">
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -227,7 +225,9 @@ const DeleteSectionButton = ({ section }: { section: Section }) => {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={() => deleteSection()}>
+            <div className="text-red-600">
             Continue
+            </div>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -258,7 +258,7 @@ const DeleteCardButton = ({ card }: { card: Card }) => {
       <AlertDialogTrigger>
         <Trash />
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent  className = "bg-white">
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -269,7 +269,9 @@ const DeleteCardButton = ({ card }: { card: Card }) => {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={() => deleteCard()}>
+            <div className = "text-red-600">
             Continue
+            </div>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -292,7 +294,6 @@ const CreateCardButton = ({
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
   const [selectedSection, setSelectedSection] = useState<Section>(
     null as unknown as Section
   );
