@@ -74,7 +74,7 @@ function profile() {
   }
 
   return (
-    <div className="bg-black h-screen">
+    <div className="bg-black min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mt-10 flex flex-col gap-8 content-center">
           <div className="flex justify-center items-center"
@@ -82,12 +82,9 @@ function profile() {
             <AvatarPicker handleChange={async (avatarUrl) => {
               console.log("userData", userData);
               userData.user.avatarUrl = avatarUrl ?? "";
-              await fetch("http://localhost:8080/ProjetAppliWeb/rest/users/updateUser/", {
+              await authFetch("/users/updateUser/", {
                 method: "PUT",
                 body: JSON.stringify(userData.user),
-                headers: {
-                  "Content-Type": "application/json",
-                },
               });
             }} user={userData.user} />
             <div
@@ -210,12 +207,9 @@ const CardRow = ({ card }: { card: Card }) => {
 const DeleteSectionButton = ({ section }: { section: Section }) => {
   const deleteSection = async () => {
     console.log("Deleting section with id: ", section.id);
-    const res = await fetch(
-      "http://localhost:8080/ProjetAppliWeb/rest/section/deleteSection/" + section.id, {
+    const res = await authFetch(
+      "section/deleteSection/" + section.id, {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
     console.log(res);
 
@@ -255,12 +249,9 @@ const DeleteSectionButton = ({ section }: { section: Section }) => {
 const DeleteCardButton = ({ card }: { card: Card }) => {
   const deleteCard = async () => {
     console.log(card)
-    const res = await fetch(
-      "http://localhost:8080/ProjetAppliWeb/rest/card/deleteCard/" + card.id, {
+    const res = await authFetch(
+      "card/deleteCard/" + card.id, {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     if (res.status === 200) {
@@ -337,7 +328,7 @@ const CreateCardButton = ({
     }
 
     console.log("Creating card with title: ", title);
-    const res = await fetch("http://localhost:8080/ProjetAppliWeb/rest/card/createCard", {
+    const res = await authFetch("card/createCard", {
       method: "POST",
       body: JSON.stringify({
         title,
@@ -346,9 +337,6 @@ const CreateCardButton = ({
         sectionId: selectedSection.id,
         color: color,
       }),
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     if (res.status === 200) {
@@ -427,7 +415,7 @@ const CreateCardButton = ({
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Section" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white">
                 {sections?.map((section) => (
                   <div key={section.id}>
                     <SelectItem value={section.title}>
@@ -497,8 +485,8 @@ const CreateSectionButton = ({
   }) => {
     setLoading(true);
     console.log(portfolioId)
-    const res = await fetch(
-      "http://localhost:8080/ProjetAppliWeb/rest/section/createSection", // + portfolio.id.toString(),
+    const res = await authFetch(
+      "section/createSection",
       {
         method: "POST",
         body: JSON.stringify({
@@ -506,14 +494,13 @@ const CreateSectionButton = ({
           description,
           portfolioId,
         }),
-        headers: {
-          "Content-Type": "application/json",
-        },
       }
     );
 
     if (res.status === 200) {
       window.location.reload();
+    } else if (res.status === 401) {
+      setError("Unauthorized");
     } else {
       setError("Error creating section");
     }
