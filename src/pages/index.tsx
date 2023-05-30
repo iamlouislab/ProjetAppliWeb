@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 const HeroSection = () => {
     return (
   <div className="py-20">
@@ -15,7 +13,7 @@ const HeroSection = () => {
 
       <div className="mt-10 flex flex-col gap-8">
         {/* Section 1 */}
-        <div className= "text-white p-6 shadow-md grid grid-cols-2 gap-16" style={{ backgroundColor: "#0c0c0c" }}>
+        <div className= "text-white p-6 shadow-md grid grid-cols-2 gap-16" style={{ backgroundColor: "#171717" }}>
           <div className="flex items-center">
             <div className="flex flex-col">
               <h3 className="text-lg font-bold mb-2">Design your ePortfolio within a minute - no coding required</h3>
@@ -30,7 +28,7 @@ const HeroSection = () => {
         </div>
 
         {/* Section 2 */}
-        <div className=" text-white p-6 shadow-md grid grid-cols-2 gap-16" style={{ backgroundColor: "#0c0c0c" }}>
+        <div className=" text-white p-6 shadow-md grid grid-cols-2 gap-16" style={{ backgroundColor: "#171717" }}>
           <div>
             <img src="https://img.freepik.com/vecteurs-libre/illustration-concept-page-web-commerce-electronique_114360-8204.jpg?w=1380&t=st=1684935969~exp=1684936569~hmac=eb9c2cb513c69b4467d82256d8b2683f26458a9172a636c3d68cc36857418591" alt="Education" className="mt-4 mx-auto rounded-lg" />
           </div>
@@ -48,7 +46,7 @@ const HeroSection = () => {
         </div>
 
         {/* Section 3 */}
-        <div className=" text-white p-6 shadow-md grid grid-cols-2 gap-16" style={{ backgroundColor: "#0c0c0c" }}>
+        <div className=" text-white p-6 shadow-md grid grid-cols-2 gap-16" style={{ backgroundColor: "#171717" }}>
           <div className="flex items-center">
             <div className="flex flex-col">
               <h3 className="text-lg font-bold mb-2">
