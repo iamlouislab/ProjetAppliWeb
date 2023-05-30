@@ -1,12 +1,6 @@
 // contexts/authContext.tsx
+import User from "@/types/User";
 import React, { createContext, useState, useEffect, FC } from "react";
-
-type User = {
-  id: number;
-  username: string;
-  password: string;
-  githubLink: string;
-} | null;
 
 type AuthContextType = {
   user: User;
@@ -18,7 +12,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 );
 
 export const AuthProvider = ({ children }: { children: any }) => {
-  const [user, setUser] = useState<User>(null);
+  const [user, setUser] = useState<User>(null as unknown as User);
 
   useEffect(() => {
     console.log("dans useEffect from context");
