@@ -195,9 +195,12 @@ const CardRow = ({ card }: { card: Card }) => {
 const DeleteSectionButton = ({ section }: { section: Section }) => {
   const deleteSection = async () => {
     console.log("Deleting section with id: ", section.id);
-    const res = await authFetch("/sections/delete", {
-      method: "POST",
-      body: JSON.stringify({ section_id: section.id }),
+    const res = await fetch(
+      "http://localhost:8080/ProjetAppliWeb/rest/section/deleteSection/" + section.id, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     console.log(res);
 
@@ -234,9 +237,13 @@ const DeleteSectionButton = ({ section }: { section: Section }) => {
 
 const DeleteCardButton = ({ card }: { card: Card }) => {
   const deleteCard = async () => {
-    const res = await authFetch("/cards/delete", {
-      method: "POST",
-      body: JSON.stringify({ card_id: card.id }),
+    console.log(card)
+    const res = await fetch(
+      "http://localhost:8080/ProjetAppliWeb/rest/card/deleteCard/" + card.id, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     if (res.status === 200) {
