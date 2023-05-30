@@ -10,7 +10,7 @@ function UserHelloSection({
   userData: User;
 }) {
   return (
-    <div className="flex gap-2 justify-around items-center pt-8">
+    <div className="flex gap-10 justify-center items-center pt-8">
       <img
         className="w-44 h-44 rounded-full"
         src={userData.avatarUrl ?? "https://sd-160040.dedibox.fr/hagimont/photo/Daniel1.jpg"}
