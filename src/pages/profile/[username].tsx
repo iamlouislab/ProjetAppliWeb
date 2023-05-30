@@ -61,7 +61,11 @@ function Username() {
     );
   } else {
     if (unknownUser) {
-      return <div className="text-white">Unknown user</div>;
+      return (<div className="flex h-screen items-center justify-center">
+        <h1 className="text-4xl text-white text-center">
+          {username} does not exist.
+        </h1>
+      </div>);
     } else {
       return (
         <div
@@ -72,7 +76,7 @@ function Username() {
           className="min-h-screen"
         >
           <div className="mx-auto w-5/6">
-            <UserHelloSection userData={userData!} portfolioData={portfolio!} />
+            <UserHelloSection userData={userData!} />
             {portfolio?.sections?.map((section: Section, index) => (
               <div key={index}>
                 <SectionComponent
