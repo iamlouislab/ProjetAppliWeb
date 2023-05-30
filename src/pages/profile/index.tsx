@@ -169,9 +169,6 @@ const CardRowHeader = () => {
         <div className="ml-2">Title</div>
         <div className="ml-2">Description</div>
       </div>
-      <div className="flex flex-row gap-2 mr-20 rounded py-2 text-2xl font-bold text-black">
-        <div className="mr-2">Image</div>
-      </div>
       <div className="flex flex-row gap-2 rounded py-2 text-2xl font-bold text-black">
         <div className="mr-2">Actions</div>
       </div>
